@@ -1,0 +1,744 @@
+{
+  "info": {
+    "_postman_id": "4ee59b82-fb4d-4290-b4e5-e8b66e21fa5e",
+    "name": "CSCI3916-hw4_kandimalla",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51950683",
+    "_collection_link": "https://go.postman.co/collection/51950683-4ee59b82-fb4d-4290-b4e5-e8b66e21fa5e?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "SignUp-pass",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Signup successful\", function () {",
+              "    pm.response.to.have.status(201);",
+              "    pm.expect(pm.response.json().success).to.be.true;",
+              "});",
+              "",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const random = Math.floor(Math.random() * 100000);",
+              "",
+              "pm.environment.set(\"username\", \"user\" + random);",
+              "pm.environment.set(\"password\", \"pass\" + random);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disabledSystemHeaders": {}
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Tej\",\n  \"username\": \"testuser1\",\n  \"password\": \"testpass1\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{App_url}}/signup",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "signup"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "signup-fail",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Duplicate user should fail\", function () {",
+              "    pm.response.to.have.status(409);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test User\",\n  \"username\": \"user1\",\n  \"password\": \"pass1\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{App_url}}/signup",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "signup"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Signin-pass",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const jsonData = pm.response.json();",
+              "",
+              "// store JWT token in environment",
+              "pm.environment.set(\"token\", jsonData.token);",
+              "",
+              "pm.test(\"Token stored\", function () {",
+              "    pm.expect(pm.environment.get(\"token\")).to.not.be.undefined;",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"testuser1\",\n  \"password\": \"testpass1\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{App_url}}/signin",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "signin"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Signin-fail",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Login failed. Invalid username or password\", function () {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"12134\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{App_url}}/signin",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "signin"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get movies-pass",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Movie retrieved\", () => {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{App_url}}/movies",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "movies"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "post movies-pass",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Movie created\", () => {",
+              "    pm.expect(pm.response.code).to.equal(201);",
+              "    const movie = pm.response.json().movie;",
+              "    pm.environment.set(\"movieTitle\", movie.title); // store for later",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Inception\",\n  \"releaseDate\": 2010,\n  \"genre\": \"Action\",\n  \"actors\": [\n    {\n      \"actorName\": \"Leonardo DiCaprio\"\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{App_url}}/movies",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "movies"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update movie-pass",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Movie updated\", () => {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n \"genre\": \"Drama\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{App_url}}/movies/{{movieTitle}}",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "movies",
+            "{{movieTitle}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete movie-pass",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Movie deleted\", () => {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n \"genre\": \"Drama\"\n}"
+        },
+        "url": {
+          "raw": "{{App_url}}/movies/{{movieTitle}}",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "movies",
+            "{{movieTitle}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create movie-fail test",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Missing actor rejected\", () => {",
+              "    pm.expect(pm.response.code).to.equal(400);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Inception\",\n  \"releaseDate\": 2010,\n  \"genre\": \"Action\",\n  \"actors\": [\n    {\n      \"actorName\": []\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{App_url}}/movies",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "movies"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get movie-fail test",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Movie Not found\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{App_url}}/movies/int",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "movies",
+            "int"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reviews- valid save",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"Response has review object\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property(\"review\");",
+              "});",
+              "",
+              "pm.test(\"Review contains correct fields\", function () {",
+              "    const review = pm.response.json().review;",
+              "    pm.expect(review).to.have.property(\"movieID\");",
+              "    pm.expect(review).to.have.property(\"username\");",
+              "    pm.expect(review).to.have.property(\"review\");",
+              "    pm.expect(review).to.have.property(\"rating\");",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"movieID\": \"69c0789a15e70e3cd2336ab6\",\n  \"username\": \"testuser\",\n  \"review\": \"Great movie!\",\n  \"rating\": 5\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{App_url}}/reviews",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "reviews"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reviews- invalid save",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Invalid movie id\", function () {",
+              "    pm.response.to.have.status(500);",
+              "});",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"movieID\": \"69c0789a15e70e3cd2336ab6+wrongidextension\",\n  \"username\": \"testuser\",\n  \"review\": \"Great movie!\",\n  \"rating\": 5\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{App_url}}/reviews",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "reviews"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get movie with reviews",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Movies include reviews array\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    ",
+              "    if (jsonData.length > 0) {",
+              "        pm.expect(jsonData[0]).to.have.property(\"reviews\");",
+              "        pm.expect(jsonData[0].reviews).to.be.an(\"array\");",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{App_url}}/movies?reviews=true",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "movies"
+          ],
+          "query": [
+            {
+              "key": "reviews",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get-reviews",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response is an array\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an(\"array\");",
+              "});",
+              "",
+              "pm.test(\"Each review has required fields\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    if (jsonData.length > 0) {",
+              "        pm.expect(jsonData[0]).to.have.property(\"movieID\");",
+              "        pm.expect(jsonData[0]).to.have.property(\"username\");",
+              "        pm.expect(jsonData[0]).to.have.property(\"review\");",
+              "        pm.expect(jsonData[0]).to.have.property(\"rating\");",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "url": {
+          "raw": "{{App_url}}/reviews",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "reviews"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get reviews -with invalid movie",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Movie not found - invalid movie id\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{App_url}}/movies/99999",
+          "host": [
+            "{{App_url}}"
+          ],
+          "path": [
+            "movies",
+            "99999"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
