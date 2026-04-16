@@ -74,7 +74,12 @@ router.post('/signin', function (req, res) {
         if (err) {
             res.send(err);
         }
-
+        if (!user) {
+            return res.status(401).send({
+                success: false,
+                msg: 'Authentication failed.'
+            });
+        }
         user.comparePassword(userNew.password, function(isMatch) {
             if (isMatch) {
                 var userToken = { id: user.id, username: user.username };
@@ -96,24 +101,30 @@ router.route('/movies')
 
     try {
 
-        // ✅ Check if query param exists
         if (req.query.reviews === 'true') {
 
             const movies = await Movie.aggregate([
                 {
                     $lookup: {
-                        from: "reviews",              // collection name in MongoDB
-                        localField: "_id",            // Movie._id
-                        foreignField: "movieID",      // Review.movieID
-                        as: "reviews"                 // output array
+                        from: "reviews",
+                        localField: "_id",
+                        foreignField: "movieID",
+                        as: "reviews"
                     }
+                },
+                {
+                    $addFields: {
+                        avgRating: { $avg: "$reviews.rating" }
+                    }
+                },
+                {
+                    $sort: { avgRating: -1 }
                 }
             ]);
-
+        
             return res.status(200).json(movies);
         }
 
-        // ✅ Default behavior (no aggregation)
         const movies = await Movie.find();
         res.status(200).json(movies);
 
@@ -142,7 +153,8 @@ router.route('/movies')
             title: req.body.title,
             releaseDate: req.body.releaseDate,
             genre: req.body.genre,
-            actors: req.body.actors
+            actors: req.body.actors,
+            imageUrl: req.body.imageUrl
         });
 
         await movie.save();
@@ -174,17 +186,32 @@ router.route('/movies/:title')
 
     try {
 
-        const movie = await Movie.findOne({
-            title: req.params.title
-        });
-
-        if (!movie) {
+        const movie = await Movie.aggregate([
+            {
+                $match: { title: req.params.title }
+            },
+            {
+                $lookup: {
+                    from: "reviews",
+                    localField: "_id",
+                    foreignField: "movieID",
+                    as: "reviews"
+                }
+            },
+            {
+                $addFields: {
+                    avgRating: { $avg: "$reviews.rating" }
+                }
+            }
+        ]);
+        
+        if (!movie || movie.length === 0) {
             return res.status(404).json({
                 message: "Movie not found"
             });
         }
-
-        res.json(movie);
+        
+        res.json(movie[0]);
 
     } catch (err) {
 
@@ -263,7 +290,7 @@ router.route('/reviews')
 
 /* GET all reviews */
 
-.get(async (req, res) => {
+.get(authJwtController.isAuthenticated, async (req, res) => {
 
     try {
 
@@ -289,7 +316,7 @@ router.route('/reviews')
 
         const review = new Review({
             movieID: req.body.movieID,
-            username: req.body.username,
+            username: req.user.username,
             review: req.body.review,
             rating: req.body.rating
         });

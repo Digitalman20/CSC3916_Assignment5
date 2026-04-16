@@ -13,7 +13,7 @@ const MovieSchema = new mongoose.Schema({
       min: [1900, 'Must be greater than 1899'],
       max: [2100, 'Must be less than 2100']
     },
-  
+
     genre: {
       type: String,
       enum: [
@@ -23,10 +23,9 @@ const MovieSchema = new mongoose.Schema({
       ]
     },
   
-    actors: [{
-      actorName: String,
-      characterName: String
-    }]
+    actors: [String],
+    imageUrl: String,
+
   });
 
 // return the model
