@@ -27,9 +27,9 @@ Create a movie (POST) - both passing and failing ones
 
 > Get reviews - passing case and failing case with invalid movieID
 
-##### Collection access:
-> Exported colelction and the environment shared under 'Postman collection' directory in this repo
-> Deployment URL: https://csc3916-assignment4-ondj.onrender.com 
+##### React site and dployment URLs:
+> React Site URL: https://csc3916-react19-1.onrender.com
+> Deployment URL: https://csc3916-assignment5-gmo0.onrender.com
 
 #### Environments
 Server.js has environments for the database access and a secure token. 
